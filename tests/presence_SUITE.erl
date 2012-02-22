@@ -64,7 +64,7 @@ init_per_testcase(CaseName, Config) ->
     escalus:init_per_testcase(CaseName, Config).
 
 end_per_testcase(add_contact, Config) ->
-    [{_, UserSpec} | _] = escalus_config:get_property(escalus_users, Config),
+    [{_, UserSpec} | _] = escalus_config:get_config(escalus_users, Config),
     remove_roster(UserSpec),
     escalus:end_per_testcase(add_contact, Config);
 end_per_testcase(subscribe, Config) ->
@@ -78,7 +78,7 @@ end_per_testcase(CaseName, Config) ->
 
 end_rosters_remove(Config) ->
     [{_, UserSpec1}, {_, UserSpec2} | _] =
-        escalus_config:get_property(escalus_users, Config),
+        escalus_config:get_config(escalus_users, Config),
     remove_roster(UserSpec1),
     remove_roster(UserSpec2),
     escalus:end_per_testcase(subscription, Config).

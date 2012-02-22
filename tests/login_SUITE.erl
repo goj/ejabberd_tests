@@ -85,7 +85,7 @@ end_per_testcase(CaseName, Config) ->
 
 register(Config) ->
     %%user should be registered in an init function
-    [{_, UserSpec} | _] = escalus_config:get_property(escalus_users, Config),
+    [{_, UserSpec} | _] = escalus_config:get_config(escalus_users, Config),
     [Username, Server, _Pass] = escalus_config:get_usp(UserSpec),
     true = escalus_ejabberd:rpc(ejabberd_auth, is_user_exists, [Username, Server]).
 
