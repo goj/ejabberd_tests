@@ -332,5 +332,5 @@ add_sample_contact(Alice, Bob, Groups, Name) ->
 
 
 remove_roster(UserSpec) ->
-    [Username, Server, _Pass] = escalus_config:get_usp(UserSpec),
+    [Username, Server, _Pass] = escalus_users:get_usp(UserSpec),
     rpc:call(ejabberd@localhost, mod_roster, remove_user, [Username, Server]).
