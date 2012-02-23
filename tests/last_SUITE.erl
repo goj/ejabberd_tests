@@ -40,12 +40,14 @@ init_per_suite(Config) ->
 end_per_suite(Config) ->
     escalus:end_per_suite(Config).
 
-init_per_group(_GroupName, Config) ->
-    Users = escalus:create_users(Config),
-    escalus:make_everyone_friends(Users).
+init_per_group(_GroupName, Config0) ->
+    Config1 = escalus:create_users(Config0),
+    Config2 = escalus:make_everyone_friends(Config1),
+    escalus_ejabberd:wait_for_session_count(0),
+    Config2.
 
 end_per_group(_GroupName, Config) ->
-    escalus:delete_users(Config).
+    error_logger:info_msg("DELETING: ~p~n", [escalus:delete_users(Config)]).
 
 init_per_testcase(CaseName, Config) ->
     escalus:init_per_testcase(CaseName, Config).

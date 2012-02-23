@@ -10,5 +10,7 @@ ct() ->
         {config, [?CT_CONFIG]},
         {dir, ?CT_DIR},
         {logdir, ?CT_REPORT}
+
+        , {suite, last_SUITE}
     ]),
     init:stop(0).
