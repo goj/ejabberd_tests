@@ -1,5 +1,4 @@
-.PHONY: all test
-
+.PHONY: all test console
 all: test
 
 test_clean: escalus/Makefile
@@ -11,6 +10,7 @@ test: escalus/Makefile
 	erlc -Iescalus/deps/exml/include \
 		 -Iescalus/deps/lxmppc/include \
 		 run_common_test.erl
+	mkdir -p ct_report
 	erl -noinput -sname test -setcookie ejabberd \
 		-pa `pwd`/tests \
 			`pwd`/escalus/ebin \
