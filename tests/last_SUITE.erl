@@ -81,7 +81,7 @@ last_offline_user(Config) ->
                           Presence = escalus_stanza:presence(<<"unavailable">>, Status),
                           escalus_client:send(Bob, Presence),
                           escalus_client:stop(Bob),
-                          timer:sleep(1024), % more than 1s, less than 2s
+                          timer:sleep(1024), % more than a second
 
                           %% Alice asks for Bob's last availability
                           escalus_client:send(Alice, escalus_stanza:last_activity(bob)),
@@ -89,7 +89,7 @@ last_offline_user(Config) ->
                           %% Alice receives Bob's status and last online time > 0
                           Stanza = escalus_client:wait_for_stanza(Alice),
                           escalus:assert(is_last_result, Stanza),
-                          1 = get_last_activity(Stanza),
+                          true = (1 =< get_last_activity(Stanza)),
                           <<"I am a banana!">> = get_last_status(Stanza)
                   end).
 last_server(Config) ->
