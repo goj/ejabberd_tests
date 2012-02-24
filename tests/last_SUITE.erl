@@ -43,11 +43,11 @@ end_per_suite(Config) ->
 init_per_group(_GroupName, Config0) ->
     Config1 = escalus:create_users(Config0),
     Config2 = escalus:make_everyone_friends(Config1),
-    escalus_ejabberd:wait_for_session_count(0),
+    escalus_ejabberd:wait_for_session_count(Config2, 0),
     Config2.
 
 end_per_group(_GroupName, Config) ->
-    error_logger:info_msg("DELETING: ~p~n", [escalus:delete_users(Config)]).
+    escalus:delete_users(Config).
 
 init_per_testcase(CaseName, Config) ->
     escalus:init_per_testcase(CaseName, Config).
@@ -60,7 +60,7 @@ end_per_testcase(CaseName, Config) ->
 %%--------------------------------------------------------------------
 last_online_user(Config) ->
     escalus:story(Config, [1, 1],
-                  fun(Alice, Bob) ->
+                  fun(Alice, _Bob) ->
                           %% Alice asks about Bob's last activity
                           escalus_client:send(Alice, escalus_stanza:last_activity(bob)),
 
@@ -81,7 +81,7 @@ last_offline_user(Config) ->
                           Presence = escalus_stanza:presence(<<"unavailable">>, Status),
                           escalus_client:send(Bob, Presence),
                           escalus_client:stop(Bob),
-                          timer:sleep(1000),
+                          timer:sleep(1024), % more than 1s, less than 2s
 
                           %% Alice asks for Bob's last availability
                           escalus_client:send(Alice, escalus_stanza:last_activity(bob)),
@@ -89,14 +89,15 @@ last_offline_user(Config) ->
                           %% Alice receives Bob's status and last online time > 0
                           Stanza = escalus_client:wait_for_stanza(Alice),
                           escalus:assert(is_last_result, Stanza),
-                          true = (get_last_activity(Stanza) > 0),
+                          1 = get_last_activity(Stanza),
                           <<"I am a banana!">> = get_last_status(Stanza)
                   end).
 last_server(Config) ->
     escalus:story(Config, [1],
                   fun(Alice) ->
                           %% Alice asks for server's uptime
-                          escalus_client:send(Alice, escalus_stanza:last_activity(escalus_users:get_server(alice))),
+                          Server = escalus_users:get_server(alice),
+                          escalus_client:send(Alice, escalus_stanza:last_activity(Server)),
 
                           %% Server replies with the uptime > 0
                           Stanza = escalus_client:wait_for_stanza(Alice),
